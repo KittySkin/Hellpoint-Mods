@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30406.217
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ghostspawner", "Ghostspawner\Ghostspawner.csproj", "{48711E04-C83B-403A-BA4D-0E6522B43F89}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{48711E04-C83B-403A-BA4D-0E6522B43F89}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{48711E04-C83B-403A-BA4D-0E6522B43F89}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{48711E04-C83B-403A-BA4D-0E6522B43F89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48711E04-C83B-403A-BA4D-0E6522B43F89}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {942DBB12-4786-4EEB-BEC5-8069D0CAA57B}
+	EndGlobalSection
+EndGlobal
