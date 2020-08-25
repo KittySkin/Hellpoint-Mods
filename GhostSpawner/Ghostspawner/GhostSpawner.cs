@@ -31,7 +31,8 @@ namespace Ghostspawner
         public class ModConfig
         {
             public float Randomize_Interval = 300f;
-            public Boolean Light_Enabled = true;
+            public Boolean Light_Enabled = false;
+            public Boolean Screen_Announce = false;
         }
 
         private const string CONFIG_PATH = @"Mods\GhostSpawner\config.xml";
@@ -61,11 +62,13 @@ namespace Ghostspawner
                 {
                     TurnOffLight();
                     SpawnGhost();
+                    if (config.Screen_Announce)
                     m_currentMessage = "Darkness it's here!";
                 }
                 else
                 {
                     SpawnGhost();
+                    if (config.Screen_Announce)
                     m_currentMessage = "Ghost has invaded!";
                 }
             }
@@ -176,7 +179,8 @@ namespace Ghostspawner
             config = new ModConfig
             {
                 Randomize_Interval = 300f,
-                Light_Enabled = true,
+                Light_Enabled = false,
+                Screen_Announce = true,
             };
 
             SaveSettings();
