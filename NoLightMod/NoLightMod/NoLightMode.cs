@@ -57,7 +57,7 @@ namespace NoLightMod
             {
                 TurnOffLight();
                 lightTimer -= TurnOffTimer;
-                TurnOffTimer = 3600f;
+                TurnOffTimer = 36000f;
             }
         }
 
@@ -65,7 +65,7 @@ namespace NoLightMod
         {
             var voteCommand = TwitchManager.Instance.GetComponentInChildren<VoteCommand>();
             voteCommand.GetComponentInChildren<VoteTurnOffLightOption>().Apply();
-            voteCommand.GetComponentInChildren<VoteTurnOffLightOption>().duration = +3600;
+            voteCommand.GetComponentInChildren<VoteTurnOffLightOption>().duration = 3600;
         }
 
         // Patches to track gameplay state
