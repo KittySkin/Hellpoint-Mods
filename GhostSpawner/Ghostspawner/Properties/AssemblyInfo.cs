@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 using Ghostspawner;
 using MelonLoader;
 
-[assembly: MelonInfo(typeof(GhostSpawner), GhostSpawner.ModInfo.NAME, GhostSpawner.ModInfo.VERSION, GhostSpawner.ModInfo.AUTHOR)]
-[assembly: MelonGame(GhostSpawner.ModInfo.GAME_COMPANY, GhostSpawner.ModInfo.GAME_NAME)]
+[assembly: MelonInfo(typeof(GhostSpawnerClass), GhostSpawnerClass.ModInfo.NAME, GhostSpawnerClass.ModInfo.VERSION, GhostSpawnerClass.ModInfo.AUTHOR)]
+[assembly: MelonGame(GhostSpawnerClass.ModInfo.GAME_COMPANY, GhostSpawnerClass.ModInfo.GAME_NAME)]
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information

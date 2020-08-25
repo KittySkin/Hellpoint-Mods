@@ -16,7 +16,7 @@ using UnityEngine.SceneManagement;
 
 namespace Ghostspawner
 {
-    public class GhostSpawner : MelonMod
+    public class GhostSpawnerClass : MelonMod
     {
         public class ModInfo
         {
@@ -31,8 +31,8 @@ namespace Ghostspawner
         public class ModConfig
         {
             public float Randomize_Interval = 300f;
-            public Boolean Light_Enabled = false;
-            public Boolean Screen_Announce = false;
+            public bool Light_Enabled = false;
+            public bool Screen_Announce = false;
         }
 
         private const string CONFIG_PATH = @"Mods\GhostSpawner\config.xml";
@@ -44,6 +44,15 @@ namespace Ghostspawner
         private static bool m_noCharacter = true;
         private float m_timeOfLastRandomize = -1f;
         private string m_currentMessage = "";
+
+        public VoteCommand VoteManager => m_voteManager ?? (m_voteManager = TwitchManager.Instance?.GetComponentInChildren<VoteCommand>());
+        private VoteCommand m_voteManager;
+
+        public VoteGhostOption GhostSpawner => m_spawnGhost ?? (m_spawnGhost = VoteManager?.GetComponentInChildren<VoteGhostOption>());
+        private VoteGhostOption m_spawnGhost;
+
+        public VoteTurnOffLightOption LightSwitch => m_turnOffLights ?? (m_turnOffLights = VoteManager?.GetComponentInChildren<VoteTurnOffLightOption>());
+        private VoteTurnOffLightOption m_turnOffLights;
 
 
         // Update and randomize time
@@ -59,28 +68,27 @@ namespace Ghostspawner
                 if (config.Light_Enabled)
                 {
                     TurnOffLight();
-                    SpawnGhost();
                     if (config.Screen_Announce)
                     m_currentMessage = "Darkness it's here!";
                 }
                 else
                 {
-                    SpawnGhost();
                     if (config.Screen_Announce)
                     m_currentMessage = "Ghost has invaded!";
                 }
+                SpawnGhost();
             }
         }
 
         private void SpawnGhost()
         {
-            TwitchManager.Instance.GetComponentInChildren<VoteGhostOption>().Apply();
+            GhostSpawner.Apply();
         }
 
         private void TurnOffLight()
         {
-            TwitchManager.Instance.GetComponentInChildren<VoteTurnOffLightOption>().Apply();
-            TwitchManager.Instance.GetComponentInChildren<VoteTurnOffLightOption>().duration = 1;
+            LightSwitch.Apply();
+            LightSwitch.duration = 1;
         }
 
 
