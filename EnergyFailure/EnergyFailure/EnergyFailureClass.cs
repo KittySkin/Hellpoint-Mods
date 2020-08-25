@@ -40,9 +40,6 @@ public class EnergyFailureClass : MelonMod
         private int flickerCount = 0;
 
 
-        public VoteCommand VoteManager => m_voteManager ?? (m_voteManager = TwitchManager.Instance?.GetComponentInChildren<VoteCommand>());
-        private VoteCommand m_voteManager;
-
         // Update and randomize time
 
         public override void OnUpdate()
@@ -59,7 +56,7 @@ public class EnergyFailureClass : MelonMod
                 {
                     TurnOffLight();
                     lightTimer -= TurnOffTimer;
-                    TurnOffTimer = random.Next(180, 241); ;
+                    TurnOffTimer = random.Next(300, 361); ;
                     //MelonLogger.Log("turning lights off");
                 }
                 else
@@ -82,16 +79,14 @@ public class EnergyFailureClass : MelonMod
 
         private void TurnOffLight()
         {
-            var voteCommand = TwitchManager.Instance.GetComponentInChildren<VoteCommand>();
-            voteCommand.GetComponentInChildren<VoteTurnOffLightOption>().Apply();
-            voteCommand.GetComponentInChildren<VoteTurnOffLightOption>().duration = 1;
+            TwitchManager.Instance.GetComponentInChildren<VoteTurnOffLightOption>().Apply();
+            TwitchManager.Instance.GetComponentInChildren<VoteTurnOffLightOption>().duration = 2;
         }
 
         private void LightFlicker()
         {
-            var voteCommand = TwitchManager.Instance.GetComponentInChildren<VoteCommand>();
-            voteCommand.GetComponentInChildren<VoteTurnOffLightOption>().Apply();
-            voteCommand.GetComponentInChildren<VoteTurnOffLightOption>().duration = 0;
+            TwitchManager.Instance.GetComponentInChildren<VoteTurnOffLightOption>().Apply();
+            TwitchManager.Instance.GetComponentInChildren<VoteTurnOffLightOption>().duration = 0;
         }
         // Patches to track gameplay state
 
