@@ -15,6 +15,7 @@ using Network;
 using UnityEngine.SceneManagement;
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
+using Debugs;
 
 
 namespace EnergyFailure
@@ -35,7 +36,8 @@ public class EnergyFailureClass : MelonMod
         public static bool InMenu => SceneManager.GetActiveScene().name.ToLower().Contains("empty");
         private static bool m_noCharacter = true;
         private float lightTimer = 0f;
-        private float TurnOffTimer = 10f;
+        private float TurnOffTimer = 120f;
+        private int flickerCount = 0;
 
 
         public VoteCommand VoteManager => m_voteManager ?? (m_voteManager = TwitchManager.Instance?.GetComponentInChildren<VoteCommand>());
@@ -47,25 +49,32 @@ public class EnergyFailureClass : MelonMod
         {
             if (LoadingView.Loading || m_noCharacter || InMenu) return;
 
-            lightTimer += Time.deltaTime;
+            lightTimer += UnityEngine.Time.deltaTime;
 
             if (lightTimer > TurnOffTimer)
             {
                 System.Random random = new System.Random();
                 int chance = random.Next(1, 101);
-                if (chance >= 90)
+                if (chance >= 95)
                 {
                     TurnOffLight();
                     lightTimer -= TurnOffTimer;
-                    TurnOffTimer = 120f;
-                    MelonLogger.Log("turning lights off for 60 seconds");
+                    TurnOffTimer = random.Next(180, 241); ;
+                    //MelonLogger.Log("turning lights off");
                 }
                 else
                 {
                     LightFlicker();
                     lightTimer -= TurnOffTimer;
-                    TurnOffTimer = random.Next(5, 31);
-                    MelonLogger.Log("flickering and waiting for " + TurnOffTimer +"seconds");
+                    TurnOffTimer = 2;
+                    flickerCount++;
+                    //MelonLogger.Log("flickering");
+                    if (flickerCount >= 3)
+                    {
+                        flickerCount = 0;
+                        TurnOffTimer = random.Next(90,151);
+                        //MelonLogger.Log("reseting count and timer after flickering");
+                    }
                 }
 
             }
