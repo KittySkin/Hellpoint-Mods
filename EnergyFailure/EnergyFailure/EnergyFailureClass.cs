@@ -38,6 +38,7 @@ public class EnergyFailureClass : MelonMod
         private float lightTimer = 0f;
         private float TurnOffTimer = 120f;
         private int flickerCount = 0;
+        private bool flickered = false;
 
         public VoteCommand VoteManager => m_voteManager ?? (m_voteManager = TwitchManager.Instance?.GetComponentInChildren<VoteCommand>());
         private VoteCommand m_voteManager;
@@ -84,12 +85,21 @@ public class EnergyFailureClass : MelonMod
 
         private void TurnOffLight()
         {
-            LightSwitch.Apply();
-            LightSwitch.duration = 2;
+            if (flickered)
+            {
+                LightSwitch.duration = 2;
+                LightSwitch.Apply();
+            }
+            else
+            {
+                LightSwitch.Apply();
+                LightSwitch.duration = 2;
+            }
         }
 
         private void LightFlicker()
         {
+            if (!flickered) flickered = true;
             LightSwitch.Apply();
             LightSwitch.duration = 0;
         }
