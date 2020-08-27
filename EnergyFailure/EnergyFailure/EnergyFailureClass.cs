@@ -16,6 +16,8 @@ using UnityEngine.SceneManagement;
 using UnhollowerBaseLib;
 using UnhollowerRuntimeLib;
 using Debugs;
+using Materials;
+using Characters;
 
 namespace EnergyFailure
 {
@@ -34,6 +36,7 @@ public class EnergyFailureClass : MelonMod
         public class ModConfig
         {
             public bool ghost_nightmare = false;
+            public bool shake_enabled = true;
         }
 
         private const string CONFIG_PATH = @"Mods\EnergyFailure\config.xml";
@@ -44,15 +47,21 @@ public class EnergyFailureClass : MelonMod
         public static bool InMenu => SceneManager.GetActiveScene().name.ToLower().Contains("empty");
         private static bool m_noCharacter = true;
         private float lightTimer = 0f;
-        private float TurnOffTimer = 120f;
+        private float TurnOffTimer = 10f;
         private int flickerCount = 0;
         private int maxFlickers = 3;
+        private bool energyFailing = false;
+        private float shakeDuration = 0;
+        private float shakeTime = 0;
+        private float shakeWaiter = 0;
 
         public VoteCommand VoteManager => m_voteManager ?? (m_voteManager = TwitchManager.Instance?.GetComponentInChildren<VoteCommand>());
         private VoteCommand m_voteManager;
 
         public VoteTurnOffLightOption LightSwitch => m_turnOffLights ?? (m_turnOffLights = VoteManager?.GetComponentInChildren<VoteTurnOffLightOption>());
         private VoteTurnOffLightOption m_turnOffLights;
+
+        private static Player m_cachedPlayer;
 
         // Update and randomize time
 
@@ -64,6 +73,7 @@ public class EnergyFailureClass : MelonMod
 
             if (lightTimer >= TurnOffTimer)
             {
+                energyFailing = true;
                 System.Random random = new System.Random();
                 int chance = random.Next(1, 101);
                 if (chance >= 95)
@@ -94,16 +104,34 @@ public class EnergyFailureClass : MelonMod
                     }
                 }
             }
+            if (energyFailing && config.shake_enabled)
+            {
+                shakeWaiter += UnityEngine.Time.deltaTime;
+                if (shakeWaiter >= 0.05)
+                {
+                    shakeWaiter = 0;
+                    ScreenShaker();
+                    //MelonLogger.Log("shaking " + shakeDuration + " times");
+                    shakeTime += UnityEngine.Time.deltaTime;
+                    if (shakeTime >= shakeDuration)
+                    {
+                        energyFailing = false;
+                        shakeTime = 0;
+                        //MelonLogger.Log("reset shaker");
+                    }
+                }
+                
+            }
         }
 
         private void TurnOffLight()
         {
             System.Random random = new System.Random();
-                LightSwitch.duration = random.Next(1, 4);
-                LightSwitch.Apply();
-                int lightSwitchData = LightSwitch.duration;
-                //MelonLogger.Log("full shutdown, duration " + lightSwitchData + " minutes");
-
+            LightSwitch.duration = random.Next(1, 4);
+            LightSwitch.Apply();
+            int lightSwitchData = LightSwitch.duration;
+            //MelonLogger.Log("full shutdown, duration " + lightSwitchData + " minutes");
+            shakeDuration = 2;
                 if (config.ghost_nightmare && lightSwitchData == 3)
                 {
                     UDebug.Execute("spawn");
@@ -115,6 +143,15 @@ public class EnergyFailureClass : MelonMod
         {
             LightSwitch.Apply();
             LightSwitch.duration = 0;
+            shakeDuration = 0.4f;
+        }
+
+        private void ScreenShaker()
+        {
+            // Determines the direction of the shake, can set 0/1/2/3.
+            System.Random random = new System.Random();
+            int shakeIndex = random.Next(1, 5);
+            Manager<Managers.CameraManager>.Instance.Shake(m_cachedPlayer, shakeIndex);
         }
 
         // Patches to track gameplay state
@@ -159,6 +196,15 @@ public class EnergyFailureClass : MelonMod
             }
         }
 
+        [HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.CreatePlayer))]
+        public class PlayerManager_CreatePlayer
+        {
+            [HarmonyPostfix]
+            public static void Postfix(Player __result)
+            {
+                m_cachedPlayer = __result;
+            }
+        }
         // ======== Settings ========
 
         public override void OnApplicationStart()
@@ -190,6 +236,7 @@ public class EnergyFailureClass : MelonMod
             config = new ModConfig
             {
                 ghost_nightmare = false,
+                shake_enabled = true,
             };
 
             SaveSettings();
