@@ -37,6 +37,8 @@ public class EnergyFailureClass : MelonMod
         {
             public bool ghost_nightmare = false;
             public bool shake_enabled = true;
+            public bool quick_holetime = true;
+            public int holetime_time = 5;
         }
 
         private const string CONFIG_PATH = @"Mods\EnergyFailure\config.xml";
@@ -47,13 +49,15 @@ public class EnergyFailureClass : MelonMod
         public static bool InMenu => SceneManager.GetActiveScene().name.ToLower().Contains("empty");
         private static bool m_noCharacter = true;
         private float lightTimer = 0f;
-        private float TurnOffTimer = 10f;
+        private float TurnOffTimer = 60f;
         private int flickerCount = 0;
         private int maxFlickers = 3;
         private bool energyFailing = false;
         private float shakeDuration = 0;
         private float shakeTime = 0;
-        private float shakeWaiter = 0;
+        private int holePosition = 0;
+        private float holeTimer = 5;
+        private bool firstHoleSetting = true;
 
         public VoteCommand VoteManager => m_voteManager ?? (m_voteManager = TwitchManager.Instance?.GetComponentInChildren<VoteCommand>());
         private VoteCommand m_voteManager;
@@ -70,6 +74,22 @@ public class EnergyFailureClass : MelonMod
             if (LoadingView.Loading || m_noCharacter || InMenu) return;
 
             lightTimer += UnityEngine.Time.deltaTime;
+
+            if (config.quick_holetime && firstHoleSetting)
+            {
+                holeTimer = config.holetime_time;
+                firstHoleSetting = false;
+            }
+
+            if (config.quick_holetime) holeTimer += UnityEngine.Time.deltaTime;
+
+            if (holeTimer >= config.holetime_time && config.quick_holetime)
+            {
+                holePosition++;
+                UDebug.Execute("bh " + holePosition);
+                holeTimer = 0;
+                if (holePosition >= 360) holePosition = 0;
+            }
 
             if (lightTimer >= TurnOffTimer)
             {
@@ -106,21 +126,15 @@ public class EnergyFailureClass : MelonMod
             }
             if (energyFailing && config.shake_enabled)
             {
-                shakeWaiter += UnityEngine.Time.deltaTime;
-                if (shakeWaiter >= 0.05)
-                {
-                    shakeWaiter = 0;
                     ScreenShaker();
-                    //MelonLogger.Log("shaking " + shakeDuration + " times");
+                    //MelonLogger.Log("shaking " + shakeDuration + " seconds");
                     shakeTime += UnityEngine.Time.deltaTime;
                     if (shakeTime >= shakeDuration)
                     {
                         energyFailing = false;
                         shakeTime = 0;
                         //MelonLogger.Log("reset shaker");
-                    }
-                }
-                
+                    }               
             }
         }
 
@@ -131,7 +145,7 @@ public class EnergyFailureClass : MelonMod
             LightSwitch.Apply();
             int lightSwitchData = LightSwitch.duration;
             //MelonLogger.Log("full shutdown, duration " + lightSwitchData + " minutes");
-            shakeDuration = 2;
+            shakeDuration = 4;
                 if (config.ghost_nightmare && lightSwitchData == 3)
                 {
                     UDebug.Execute("spawn");
@@ -143,7 +157,7 @@ public class EnergyFailureClass : MelonMod
         {
             LightSwitch.Apply();
             LightSwitch.duration = 0;
-            shakeDuration = 0.4f;
+            shakeDuration = 1.5f;
         }
 
         private void ScreenShaker()
@@ -237,6 +251,8 @@ public class EnergyFailureClass : MelonMod
             {
                 ghost_nightmare = false,
                 shake_enabled = true,
+                quick_holetime = true,
+                holetime_time = 5,
             };
 
             SaveSettings();

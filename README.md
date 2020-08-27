@@ -10,6 +10,7 @@ No Light Mode:
 Disable lights for the game, just darkness, and that's all.
 
 Energy Failure:
-Make lights flicker at random intervals and sometimes turn them off completely.
+Make lights flicker at random intervals and sometimes turn them off completely while also adding other gameplay related stuff. Can be configured to enable or disable ghost spawns during shutdowns, screen shakes, black hole speed modifier and black hole speed.
+
 
 All my mods needs MelonLoader to work. Download it here. https://github.com/HerpDerpinstine/MelonLoader/releases/latest/download/MelonLoader.Installer.exe
